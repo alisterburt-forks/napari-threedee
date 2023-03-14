@@ -1,5 +1,5 @@
 from napari_threedee.annotators import SphereAnnotator
-from napari_threedee.annotators.sphere_annotator import SphereAnnotatorMode
+from napari_threedee.annotators.spheres.annotator import SphereAnnotatorMode
 
 
 def test_sphere_annotator_instantiation(viewer_with_plane_and_points_3d):
@@ -41,8 +41,8 @@ def test_sphere_annotator_enable_add_mode_side_effects(sphere_annotator):
     # change to add mode
     sphere_annotator.mode = SphereAnnotatorMode.ADD
 
-    # check no point selected
+    # check no points selected
     assert sphere_annotator.points_layer.selected_data == set()
 
-    # check sphere id for next point updated
+    # check spheres id for next points updated
     assert sphere_annotator.points_layer.current_properties[sphere_annotator.SPHERE_ID_FEATURES_KEY] == 1

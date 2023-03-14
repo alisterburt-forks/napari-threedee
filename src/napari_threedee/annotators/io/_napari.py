@@ -7,9 +7,9 @@ from napari.layers import Layer
 from napari.types import LayerDataTuple
 
 from . import N3D_METADATA_KEY, ANNOTATION_TYPE_KEY
-from ..spline_annotator import SplineAnnotator
-from ..sphere_annotator import SphereAnnotator
-from ..point_annotator import PointAnnotator
+from napari_threedee.annotators.spheres import SplineAnnotator
+from napari_threedee.annotators.spheres.annotator import SphereAnnotator
+from napari_threedee.annotators.points import PointAnnotator
 import napari_threedee.annotators.io.sphere as sphere_io
 import napari_threedee.annotators.io.spline as spline_io
 import napari_threedee.annotators.io.point as point_io

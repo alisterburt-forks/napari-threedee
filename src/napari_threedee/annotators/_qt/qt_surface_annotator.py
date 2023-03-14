@@ -4,7 +4,7 @@ from qtpy.QtWidgets import QPushButton, QGroupBox, QVBoxLayout, QSpinBox, QLabel
 
 from napari_threedee._backend.threedee_widget_base import QtThreeDeeWidgetBase
 
-from napari_threedee.annotators.surface_annotator import SurfaceAnnotator
+from napari_threedee.annotators.surfaces import SurfaceAnnotator
 
 
 
@@ -58,7 +58,7 @@ class QtSurfaceAnnotatorWidget(QtThreeDeeWidgetBase):
             self.fitting_group_box.setVisible(False)
 
     def _update_active_level_id(self):
-        """Update the spline id spinbox when the model has changed value"""
+        """Update the splines id spinbox when the model has changed value"""
         self.active_level_index_spinbox.setValue(self.model.active_spline_id)
 
 

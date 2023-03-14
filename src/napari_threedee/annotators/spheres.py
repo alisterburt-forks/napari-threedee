@@ -9,7 +9,7 @@ from napari.utils.events import EmitterGroup, Event
 from napari.layers.utils.layer_utils import features_to_pandas_dataframe
 from vispy.geometry import create_sphere
 
-from .._backend import ThreeDeeModel
+from .._backend import N3dComponent
 from ..mouse_callbacks import add_point_on_plane
 from ..utils.napari_utils import add_mouse_callback_safe, \
     remove_mouse_callback_safe
@@ -21,7 +21,7 @@ class SphereAnnotatorMode(Enum):
     EDIT = auto()
 
 
-class SphereAnnotator(ThreeDeeModel):
+class SphereAnnotator(N3dComponent):
     COLOR_CYCLE = [
         '#1f77b4',
         '#ff7f0e',

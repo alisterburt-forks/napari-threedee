@@ -9,7 +9,7 @@ from napari_threedee.visualization.camera_spline import CameraSpline, CameraSpli
 
 
 class QtCameraDirectionControls(QWidget):
-    """Widget for setting the camera direction along the spline"""
+    """Widget for setting the camera direction along the splines"""
     def __init__(self, viewer, model, parent=None):
         super().__init__(parent=parent)
 
@@ -29,7 +29,7 @@ class QtCameraDirectionControls(QWidget):
 
 
 class QCameraSplineNavationWidget(QWidget):
-    """Widget for controlling the camera position along the spline."""
+    """Widget for controlling the camera position along the splines."""
     def __init__(self, viewer, model, parent=None):
         super().__init__(parent=parent)
 
@@ -62,7 +62,7 @@ class QCameraSplineNavationWidget(QWidget):
         self.model.current_spline_coordinate = tick_position
 
     def _on_spline_update(self, event=None):
-        """Update the visibility of the spline slider depending if there is a valid spline."""
+        """Update the visibility of the splines slider depending if there is a valid splines."""
         if self.model.spline_valid is True:
             self.setDisabled(False)
         else:
@@ -70,7 +70,7 @@ class QCameraSplineNavationWidget(QWidget):
 
 
 class QtCameraSplineControls(QWidget):
-    """Widget for annotating and exploring a spline path through a scene."""
+    """Widget for annotating and exploring a splines path through a scene."""
     PAN_ZOOM_BUTTON_NAME: str = "pan_zoom"
     ANNOTATE_BUTTON_NAME: str = "annotate"
     EXPLORE_BUTTON_NAME: str = "explore"
@@ -154,14 +154,14 @@ class QtCameraSplineControls(QWidget):
 
 
 class QtCameraSpline(QtThreeDeeWidgetBase):
-    """Container widget for the camera spline controls"""
+    """Container widget for the camera splines controls"""
     DISABLE_STRING: str = "deactivate"
     ENABLE_STRING: str = "activate"
 
     def __init__(self, viewer: napari.Viewer):
         super().__init__(model_class=CameraSpline, viewer=viewer)
 
-        # create and add the spline widget
+        # create and add the splines widget
         self.spline_widget = QtCameraSplineControls(viewer=viewer, model=self.model, parent=self)
         self.spline_widget.setVisible(False)
         self.layout().addWidget(self.spline_widget)

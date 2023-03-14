@@ -12,6 +12,9 @@ if TYPE_CHECKING:
     from napari.utils.events import Event
 
 
+
+
+
 def add_point_on_plane(
         viewer: napari.viewer.Viewer,
         event: Event,

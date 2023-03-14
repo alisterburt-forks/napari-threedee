@@ -20,7 +20,7 @@ def test_initialize_camera_spline():
 
 
 def test_setting_camera_spline_mode():
-    """Test setting camera spline mode with strings and Enum"""
+    """Test setting camera splines mode with strings and Enum"""
     viewer = napari.Viewer()
     camera_spline = CameraSpline(viewer=viewer)
 
@@ -49,7 +49,7 @@ class FakeMouseEvent:
 
 @pytest.mark.skipif(platform.system() == 'Windows', reason="fails on CI")
 def test_annotate_spline():
-    """Test annotating a spline in the CameraSpline model."""
+    """Test annotating a splines in the CameraSpline model."""
     viewer = napari.Viewer()
     camera_spline = CameraSpline(viewer=viewer)
 
@@ -72,7 +72,7 @@ def test_annotate_spline():
     points_layer = camera_spline.spline_annotator_model.points_layer
     assert isinstance(points_layer, napari.layers.Points)
 
-    # add 4 points and check that the spline was created
+    # add 4 points and check that the splines was created
     points_layer.add(np.random.random((4, 3)))
     assert camera_spline.spline_valid is True
     n3d_metadata = points_layer.metadata[N3D_METADATA_KEY]
@@ -81,7 +81,7 @@ def test_annotate_spline():
 
 @pytest.mark.skipif(platform.system() == 'Windows', reason="fails on CI")
 def test_spline_explore():
-    """Test moving the camera along the spline"""
+    """Test moving the camera along the splines"""
     viewer = napari.Viewer()
     viewer.dims.ndisplay = 3
     camera_spline = CameraSpline(viewer=viewer)
@@ -97,7 +97,7 @@ def test_spline_explore():
     camera_spline.set_layers(image_layer)
     assert camera_spline.spline_valid is False
 
-    # verify that spline position can't be set without valid spline
+    # verify that splines position can't be set without valid splines
     initial_spline_coordinate = camera_spline.current_spline_coordinate
     assert initial_spline_coordinate == 0
     camera_spline.set_camera_position(0.5)
@@ -107,7 +107,7 @@ def test_spline_explore():
     camera_spline.enabled = True
     camera_spline.mode = "annotate"
 
-    # add 4 points and check that the spline was created
+    # add 4 points and check that the splines was created
     points_layer = camera_spline.spline_annotator_model.points_layer
     points_layer.add(10 * np.random.random((4, 3)))
     assert camera_spline.spline_valid is True

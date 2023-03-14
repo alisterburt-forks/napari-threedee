@@ -24,17 +24,10 @@ plane_layer = viewer.add_image(
     plane=plane_parameters,
 )
 
-points_layer = viewer.add_points(
-    data=[],
-    size=5,
-    face_color='cornflowerblue',
-    ndim=3
-)
-
 annotator = PointAnnotator(
     viewer=viewer,
     image_layer=plane_layer,
-    points_layer=points_layer,
+    points_layer=None,
     enabled=True,
 )
 viewer.layers.selection = [plane_layer]

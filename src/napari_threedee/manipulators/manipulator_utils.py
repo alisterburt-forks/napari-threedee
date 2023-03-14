@@ -105,7 +105,7 @@ def select_rotator(click_position: np.ndarray, plane_normal: np.ndarray,  rotato
     indices = np.where(in_slice_matches)[0]
 
     if len(indices) > 0:
-        # find the point that is most in the foreground
+        # find the points that is most in the foreground
         candidate_point_distances = projection_distances[indices]
         closest_index = indices[np.argmin(candidate_point_distances)]
         selection = closest_index
@@ -211,7 +211,7 @@ def make_tube_mesh(
         binormal = binormals[i]
         r = radius[i]
 
-        # Add a vertex for each point on the circle
+        # Add a vertex for each points on the circle
         v = np.arange(tube_points,
                       dtype=np.float) / tube_points * 2 * np.pi
         cx = -1. * r * np.cos(v)
@@ -328,7 +328,7 @@ def make_rotator_arc(
     Parameters
     ----------
     center_point : np.ndarray
-        (3,) array with the center point of the arc.
+        (3,) array with the center points of the arc.
     normal_vector : np.ndarray
         (3,) array with the normal vector of the arc.
     radius : float
@@ -380,7 +380,7 @@ def make_rotator_data(
     rotator_colors : np.ndarray
         (n, 4) array of RGBA colors for the n rotators to be created.
     center_point : np.ndarray
-        (3,) array with the center point of the arc.
+        (3,) array with the center points of the arc.
     radius : float
         The radius of the arc in data units.
     n_segments : int
@@ -431,7 +431,7 @@ def make_rotator_data(
         assert color.shape == (4,)
         colors.append(np.tile(color, (n_segments, 1)))
 
-        # get the handle point and color
+        # get the handle points and color
         handle_points.append(vertices[handle_index])
         handle_colors.append(color)
 

@@ -44,7 +44,7 @@ def select_line_segment(
 
 
 def distance_between_point_and_line_segment_2d(p, p1, p2):
-    """Calculate the distance between a point p and a line segment p1, p2
+    """Calculate the distance between a points p and a line segment p1, p2
     """
     x0 = p[0]
     y0 = p[1]
@@ -137,13 +137,13 @@ def select_sphere_from_click(
 ) -> Optional[int]:
     """Determine which, if any spheres are intersected by a click ray.
 
-    If multiple spheres are intersected, the closest sphere to the click point
+    If multiple spheres are intersected, the closest spheres to the click points
     (ray start) will be returned.
 
     Parameters
     ----------
     click_point : np.ndarray
-        The point where the click ray originates.
+        The points where the click ray originates.
     view_direction : np.ndarray
         The unit vector pointing in the direction the viewer is looking.
     sphere_centroids : np.ndarray
@@ -154,7 +154,7 @@ def select_sphere_from_click(
     Returns
     -------
     selection : Optional[int]
-        The index for the sphere that was intersected.
+        The index for the spheres that was intersected.
         Returns None if no spheres are intersected.
     """
     # project the in view points onto the camera plane
@@ -185,7 +185,7 @@ def select_sphere_from_click(
     indices = np.where(in_slice_matches)[0]
 
     if len(indices) > 0:
-        # find the point that is most in the foreground
+        # find the points that is most in the foreground
         candidate_point_distances = projection_distances[indices]
         min_distance_index = np.argmin(candidate_point_distances)
         selection = indices[min_distance_index]

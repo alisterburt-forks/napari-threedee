@@ -1,8 +1,8 @@
 """Example of using the points manipulator to re-position points.
 
-Enter the point selection mode and click on a point to activate the manipulator.
-Click and drag the arms of the manipulator to move the point.
-When a point is selected, hold space to rotate the view without losing the selection.
+Enter the points selection mode and click on a points to activate the manipulator.
+Click and drag the arms of the manipulator to move the points.
+When a points is selected, hold space to rotate the view without losing the selection.
 """
 
 import numpy as np

@@ -4,12 +4,12 @@ import pytest
 MY_PLUGIN_NAME = "napari-threedee"
 MY_WIDGET_NAMES = [
     "render plane manipulator",
-    "point manipulator",
+    "points manipulator",
     "layer manipulator",
-    "point annotator",
-    "spline annotator",
+    "points annotator",
+    "splines annotator",
     "mesh lighting controls",
-    "camera spline control"
+    "camera splines control"
 ]
 
 

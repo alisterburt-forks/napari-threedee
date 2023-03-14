@@ -113,7 +113,7 @@ class PointManipulator(BaseManipulator):
     def napari_selection_callback_passthrough(self, layer, event):
         if self._backend.is_dragging:  # early exit if manipulator clicked
             return
-        # if manipulator not clicked, do normal point selection
+        # if manipulator not clicked, do normal points selection
         value = layer.get_value(
             position=event.position,
             view_direction=event.view_direction,

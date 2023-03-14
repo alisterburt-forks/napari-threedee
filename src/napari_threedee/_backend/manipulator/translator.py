@@ -11,7 +11,7 @@ class Translator(BaseModel, _Grabbable):
     """Axis, offset from origin with a handle at the base."""
     axis: AxisModel
     length: float = 3
-    distance_from_origin: float = 21  # distance of start point from origin
+    distance_from_origin: float = 21  # distance of start points from origin
 
     @property
     def start_point(self) -> np.ndarray:

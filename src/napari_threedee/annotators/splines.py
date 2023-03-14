@@ -1,3 +1,4 @@
+
 import einops
 
 import napari
@@ -9,9 +10,7 @@ from pydantic import validator, PrivateAttr
 from scipy.interpolate import splprep, splev
 from typing import Tuple, Union, Optional, Dict
 
-from morphosamplers.surface_spline import GriddedSplineSurface
-
-from napari_threedee._backend.threedee_model import ThreeDeeModel
+from napari_threedee._backend.threedee_model import N3dComponent
 from ..mouse_callbacks import add_point_on_plane
 from napari_threedee.utils.napari_utils import add_mouse_callback_safe, \
     remove_mouse_callback_safe
@@ -115,11 +114,20 @@ class _NDimensionalFilament(EventedModel):
         return self._sample_backbone(u, derivative=calculate_derivative)
 
 
-class SurfaceAnnotator(ThreeDeeModel):
+class SplineAnnotator(N3dComponent):
     COLOR_CYCLE = [
         '#1f77b4',
+        '#ff7f0e',
+        '#2ca02c',
+        '#d62728',
+        '#9467bd',
+        '#8c564b',
+        '#e377c2',
+        '#7f7f7f',
+        '#bcbd22',
+        '#17becf',
     ]
-    ANNOTATION_TYPE = "surface"
+    ANNOTATION_TYPE = "spline"
     # keys for data stored in features table
     SPLINE_ID_FEATURES_KEY = "spline_id"
     SPLINE_COLOR_FEATURES_KEY = "spline_color"
@@ -144,7 +152,6 @@ class SurfaceAnnotator(ThreeDeeModel):
         self.image_layer = image_layer
         self.points_layer = None
         self.shapes_layer = None
-        self.surface_layer = None
         self.auto_fit_spline = True
         self.enabled = enabled
 
@@ -295,25 +302,3 @@ class SurfaceAnnotator(ThreeDeeModel):
             )
             spline_color = spline_colors[spline_id]
             self.shapes_layer.add_paths(spline_points, edge_color=spline_color)
-
-    def _draw_surface(self):
-        grouped_features = self.points_layer.features.groupby(
-            self.SPLINE_ID_FEATURES_KEY
-        )
-        surface_levels = [
-            self.points_layer.data[df.index]
-            for _, df in grouped_features
-        ]
-        surface = GriddedSplineSurface(points=surface_levels, separation=3)
-        surface_points, triangle_idx = surface.mesh()
-        valid_triangle_idx = np.all(np.isin(triangle_idx, np.argwhere(surface.mask)),
-                                 axis=1)
-        triangle_idx = triangle_idx[valid_triangle_idx]
-
-        if self.surface_layer is None:
-            self.surface_layer = self.viewer.add_surface(
-                data=(surface_points, triangle_idx),
-                shading='flat'
-            )
-        else:
-            self.surface_layer.data = surface.mesh()

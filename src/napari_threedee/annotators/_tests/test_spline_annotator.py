@@ -1,6 +1,6 @@
 from napari.layers import Points
 
-from napari_threedee.annotators.spline_annotator import SplineAnnotator
+from napari_threedee.annotators.spheres import SplineAnnotator
 
 
 def test_spline_annotator_instantiation(make_napari_viewer, blobs_layer_4d_plane):
@@ -27,14 +27,14 @@ def test_add_point(spline_annotator):
     assert len(points_layer.data) == 1
     assert points_layer.features[label][0] == spline_annotator.active_spline_id
 
-    # change filemanet_id in annotator, add point, check matches
+    # change filemanet_id in annotator, add points, check matches
     spline_annotator.active_spline_id = 534
     points_layer.add([2, 3, 4, 5])
     assert points_layer.features[label][1] == spline_annotator.active_spline_id
 
 
 def test_get_colors(spline_annotator):
-    """Test getting spline colors from the annotator."""
+    """Test getting splines colors from the annotator."""
     points_layer = spline_annotator.points_layer
     spline_annotator.active_spline_id = 0
     points_layer.add([1, 2, 3, 4])

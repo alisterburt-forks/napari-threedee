@@ -137,7 +137,7 @@ class NapariManipulatorBackend:
         Parameters
         ----------
         click_point : np.ndarray
-            The click point in data coordinates
+            The click points in data coordinates
         view_direction : np.ndarray
             The vector in the direction of the view (click).
         Returns
@@ -168,7 +168,7 @@ class NapariManipulatorBackend:
         axis_vector = AxisModel.from_id(selected_axis_id).vector
         rotated_axis_vector = self.manipulator_model.rotation_matrix @ axis_vector
 
-        # is the clicked point  a translator or a rotator?
+        # is the clicked points  a translator or a rotator?
         point_is_translator = np.zeros(len(handle_data.points), dtype=bool)
         point_is_translator[:len(self.vispy_visual_data.translator_handle_data)] = True
         point_is_translator = point_is_translator[selection] == True  # np.array(True) is not True

@@ -22,7 +22,7 @@ The following assumes an `n3d` file has been read into a variable called
 ```python
 import zarr
 
-zarr.load('sphere.n3d')
+zarr.load('spheres.n3d')
 ```
 
 - `n3d` is an `(n, d)` [`zarr.core.Array`](https://zarr.readthedocs.

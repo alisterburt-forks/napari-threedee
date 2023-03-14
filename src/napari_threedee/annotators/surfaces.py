@@ -1,4 +1,3 @@
-
 import einops
 
 import napari
@@ -10,11 +9,13 @@ from pydantic import validator, PrivateAttr
 from scipy.interpolate import splprep, splev
 from typing import Tuple, Union, Optional, Dict
 
-from napari_threedee._backend.threedee_model import ThreeDeeModel
-from ..mouse_callbacks import add_point_on_plane
+from morphosamplers.surface_spline import GriddedSplineSurface
+
+from napari_threedee._backend.threedee_model import N3dComponent
+from napari_threedee.mouse_callbacks import add_point_on_plane
 from napari_threedee.utils.napari_utils import add_mouse_callback_safe, \
     remove_mouse_callback_safe
-from .io import N3D_METADATA_KEY, ANNOTATION_TYPE_KEY
+from napari_threedee.annotators.io import N3D_METADATA_KEY, ANNOTATION_TYPE_KEY
 
 
 class _NDimensionalFilament(EventedModel):
@@ -53,7 +54,7 @@ class _NDimensionalFilament(EventedModel):
 
     def _calculate_filament_spline_parameters(self):
         """Spline parametrisation mapping [0, 1] to a smooth curve through filament points.
-        Note: equidistant sampling of this spline parametrisation will not yield equidistant
+        Note: equidistant sampling of this splines parametrisation will not yield equidistant
         samples in Euclidean space.
         """
         self._raw_spline_tck, _ = splprep(self.points.T, s=0, k=3)
@@ -62,11 +63,11 @@ class _NDimensionalFilament(EventedModel):
         """Calculate a mapping of normalised cumulative distance to linear samples range [0, 1].
         * Normalised cumulative distance is the cumulative euclidean distance along the filament
           rescaled to a range of [0, 1].
-        * The spline parametrisation calculated here can be used to map linearly spaced values
-        which when used in the filament spline parametrisation, yield equidistant points in
+        * The splines parametrisation calculated here can be used to map linearly spaced values
+        which when used in the filament splines parametrisation, yield equidistant points in
         Euclidean space.
         """
-        # sample the current filament spline parametrisation, yielding non-equidistant samples
+        # sample the current filament splines parametrisation, yielding non-equidistant samples
         u = np.linspace(0, 1, self._n_spline_samples)
         filament_samples = splev(u, self._raw_spline_tck)
         filament_samples = np.stack(filament_samples, axis=1)
@@ -77,10 +78,10 @@ class _NDimensionalFilament(EventedModel):
         inter_point_distances = np.linalg.norm(inter_point_differences, axis=1)
         cumulative_distance = np.cumsum(inter_point_distances)
 
-        # calculate spline mapping normalised cumulative distance to linear samples in [0, 1]
+        # calculate splines mapping normalised cumulative distance to linear samples in [0, 1]
         self._length = cumulative_distance[-1]
         cumulative_distance /= self._length
-        # prepend a zero, no distance has been covered at start of spline parametrisation
+        # prepend a zero, no distance has been covered at start of splines parametrisation
         cumulative_distance = np.r_[[0], cumulative_distance]
         self._equidistant_spline_tck, _ = splprep(
             [u], u=cumulative_distance, s=0, k=3
@@ -114,20 +115,11 @@ class _NDimensionalFilament(EventedModel):
         return self._sample_backbone(u, derivative=calculate_derivative)
 
 
-class SplineAnnotator(ThreeDeeModel):
+class SurfaceAnnotator(N3dComponent):
     COLOR_CYCLE = [
         '#1f77b4',
-        '#ff7f0e',
-        '#2ca02c',
-        '#d62728',
-        '#9467bd',
-        '#8c564b',
-        '#e377c2',
-        '#7f7f7f',
-        '#bcbd22',
-        '#17becf',
     ]
-    ANNOTATION_TYPE = "spline"
+    ANNOTATION_TYPE = "surface"
     # keys for data stored in features table
     SPLINE_ID_FEATURES_KEY = "spline_id"
     SPLINE_COLOR_FEATURES_KEY = "spline_color"
@@ -152,13 +144,14 @@ class SplineAnnotator(ThreeDeeModel):
         self.image_layer = image_layer
         self.points_layer = None
         self.shapes_layer = None
+        self.surface_layer = None
         self.auto_fit_spline = True
         self.enabled = enabled
 
         self.active_spline_id: int = 0
 
-        # storage for the spline objects
-        # each spline is in its own object
+        # storage for the splines objects
+        # each splines is in its own object
         self._splines = dict()
 
         if image_layer is not None:
@@ -198,7 +191,7 @@ class SplineAnnotator(ThreeDeeModel):
         layer = Points(
             data=[0] * self.image_layer.data.ndim,
             ndim=self.image_layer.data.ndim,
-            name="spline control points",
+            name="splines control points",
             size=3,
             features={self.SPLINE_ID_FEATURES_KEY: [0]},
             face_color=self.SPLINE_ID_FEATURES_KEY,
@@ -262,7 +255,7 @@ class SplineAnnotator(ThreeDeeModel):
         for spline_name, spline_df in grouped_points_features:
             point_indices = spline_df.index.tolist()
             if len(point_indices) > self.SPLINE_ORDER:
-                # the number of points must be greater than the spline order to properly fit
+                # the number of points must be greater than the splines order to properly fit
                 spline_coordinates = self.points_layer.data[point_indices]
                 splines[spline_name] = _NDimensionalFilament(
                     points=spline_coordinates, k=self.SPLINE_ORDER
@@ -302,3 +295,25 @@ class SplineAnnotator(ThreeDeeModel):
             )
             spline_color = spline_colors[spline_id]
             self.shapes_layer.add_paths(spline_points, edge_color=spline_color)
+
+    def _draw_surface(self):
+        grouped_features = self.points_layer.features.groupby(
+            self.SPLINE_ID_FEATURES_KEY
+        )
+        surface_levels = [
+            self.points_layer.data[df.index]
+            for _, df in grouped_features
+        ]
+        surface = GriddedSplineSurface(points=surface_levels, separation=3)
+        surface_points, triangle_idx = surface.mesh()
+        valid_triangle_idx = np.all(np.isin(triangle_idx, np.argwhere(surface.mask)),
+                                 axis=1)
+        triangle_idx = triangle_idx[valid_triangle_idx]
+
+        if self.surface_layer is None:
+            self.surface_layer = self.viewer.add_surface(
+                data=(surface_points, triangle_idx),
+                shading='flat'
+            )
+        else:
+            self.surface_layer.data = surface.mesh()

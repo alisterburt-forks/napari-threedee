@@ -4,7 +4,7 @@ contributions:
   commands:
     # Annotators
     - id: napari-threedee.QtPointAnnotatorWidget
-      title: Create point annotator
+      title: Create points annotator
       python_name: napari_threedee.dock_widgets:QtPointAnnotatorWidget
 
     - id: napari-threedee.QtSplineAnnotatorWidget
@@ -17,7 +17,7 @@ contributions:
       python_name: napari_threedee.dock_widgets:QtRenderPlaneManipulatorWidget
 
     - id: napari-threedee.QtPointManipulatorWidget
-      title: Create point manipulator
+      title: Create points manipulator
       python_name: napari_threedee.dock_widgets:QtPointManipulatorWidget
 
     - id: napari-threedee.QtLayerManipulatorWidget
@@ -31,7 +31,7 @@ contributions:
 
     # Visualisation
     - id: napari-threedee.QtCameraSplineWidget
-      title: Create camera spline control widget
+      title: Create camera splines control widget
       python_name: napari_threedee.dock_widgets:QtCameraSpline
 
     # Reader
@@ -48,17 +48,17 @@ contributions:
   widgets:
     # Annotators
     - command: napari-threedee.QtPointAnnotatorWidget
-      display_name: point annotator
+      display_name: points annotator
 
     - command: napari-threedee.QtSplineAnnotatorWidget
-      display_name: spline annotator
+      display_name: splines annotator
 
     # Manipulators
     - command: napari-threedee.QtRenderPlaneManipulatorWidget
       display_name: render plane manipulator
 
     - command: napari-threedee.QtPointManipulatorWidget
-      display_name: point manipulator
+      display_name: points manipulator
 
     - command: napari-threedee.QtLayerManipulatorWidget
       display_name: layer manipulator
@@ -69,7 +69,7 @@ contributions:
 
     # Visualisation
     - command: napari-threedee.QtCameraSplineWidget
-      display_name: camera spline control
+      display_name: camera splines control
 
 
   writers:

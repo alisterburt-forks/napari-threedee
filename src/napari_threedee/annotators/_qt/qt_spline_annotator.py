@@ -4,17 +4,17 @@ from qtpy.QtWidgets import QPushButton, QGroupBox, QVBoxLayout, QCheckBox, QSpin
 
 from napari_threedee._backend.threedee_widget_base import QtThreeDeeWidgetBase
 
-from napari_threedee.annotators.spline_annotator import SplineAnnotator
+from napari_threedee.annotators.spheres import SplineAnnotator
 
 
 class QtSplineAnnotatorWidget(QtThreeDeeWidgetBase):
     def __init__(self, viewer: napari.Viewer):
         super().__init__(model_class=SplineAnnotator, viewer=viewer)
 
-        self.auto_fit_checkbox = QCheckBox("automatically fit spline")
+        self.auto_fit_checkbox = QCheckBox("automatically fit splines")
         self.auto_fit_checkbox.clicked.connect(self._on_auto_fit)
         self.auto_fit_checkbox.setChecked(self.model.auto_fit_spline)
-        self.fit_spline_button = QPushButton("fit spline")
+        self.fit_spline_button = QPushButton("fit splines")
         self.fit_spline_button.pressed.connect(self._on_spline_fit)
 
         spinbox_layout = QHBoxLayout()
@@ -22,14 +22,14 @@ class QtSplineAnnotatorWidget(QtThreeDeeWidgetBase):
         self.active_spline_index_spinbox.setMinimum(0)
         self.active_spline_index_spinbox.setValue(self.model.active_spline_id)
         self.active_spline_index_spinbox.valueChanged.connect(self._on_current_filament_id_changed)
-        spinbox_layout.addWidget(QLabel("current spline index:"))
+        spinbox_layout.addWidget(QLabel("current splines index:"))
         spinbox_layout.addWidget(self.active_spline_index_spinbox)
 
         # add the instructions widget
 
 
         # add the fitting UI to the group_box
-        self.fitting_group_box = QGroupBox("fit spline")
+        self.fitting_group_box = QGroupBox("fit splines")
         group_box_layout = QVBoxLayout()
         group_box_layout.addLayout(spinbox_layout)
         group_box_layout.addWidget(self.auto_fit_checkbox)
@@ -69,7 +69,7 @@ class QtSplineAnnotatorWidget(QtThreeDeeWidgetBase):
             self.fitting_group_box.setVisible(False)
 
     def _update_active_spline_id(self):
-        """Update the spline id spinbox when the model has changed value"""
+        """Update the splines id spinbox when the model has changed value"""
         self.active_spline_index_spinbox.setValue(self.model.active_spline_id)
 
 

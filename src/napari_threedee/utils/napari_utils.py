@@ -7,7 +7,9 @@ import napari
 import numpy as np
 from magicgui.widgets import FunctionGui
 from napari.layers import Points, Image
+from napari.utils.events import Event
 
+from napari_threedee.geometry_utils import point_in_bounding_box
 
 NAPARI_LAYER_TYPES = (
     napari.layers.Layer,
@@ -71,7 +73,8 @@ def generate_populated_layer_selection_widget(func, viewer) -> FunctionGui:
     parameters = inspect.signature(func).parameters
     magicgui_parameter_arguments = {
         parameter_name: {
-            'choices': partial(get_layers_of_type, viewer=viewer, layer_type=parameter.annotation)
+            'choices': partial(get_layers_of_type, viewer=viewer,
+                               layer_type=parameter.annotation)
         }
         for parameter_name, parameter
         in parameters.items()
@@ -91,7 +94,7 @@ def get_mouse_position_in_displayed_dimensions(event) -> np.ndarray:
     Returns
     -------
     click_dir_data_3d : np.ndarray
-        The click direction in displayed data coordiantes
+        The click position in displayed data coordiantes
     """
     click_position_world = event.position
     return np.asarray(click_position_world)[list(event.dims_displayed)]
@@ -109,7 +112,8 @@ def get_view_direction_in_displayed_dimensions(event) -> np.ndarray:
     return np.asarray(view_direction_world)[list(event.dims_displayed)]
 
 
-def get_mouse_position_in_displayed_layer_data_coordinates(layer, event) -> Tuple[np.ndarray, np.ndarray]:
+def get_mouse_position_in_displayed_layer_data_coordinates(layer, event) -> Tuple[
+    np.ndarray, np.ndarray]:
     """Get the mouse click position and direction in layer data displayed coordinates.
 
     Parameters
@@ -143,3 +147,34 @@ def get_mouse_position_in_displayed_layer_data_coordinates(layer, event) -> Tupl
     return click_position_data_3d, click_dir_data_3d
 
 
+def mouse_event_to_plane_position_3d(
+    event: Event,
+    viewer: napari.viewer.Viewer,
+    plane_layer: napari.layers.Image,
+) -> np.ndarray:
+    """Calculate 3D intersection of click with plane through nD data."""
+    displayed_dims = np.asarray(viewer.dims.displayed)[
+        list(viewer.dims.displayed_order)
+    ]
+    cursor_position_3d = np.asarray(event.position)[displayed_dims]
+    intersection_3d = plane_layer.plane.intersect_with_line(
+        line_position=cursor_position_3d,
+        line_direction=event.view_direction[displayed_dims]
+    )
+    return intersection_3d
+
+
+def mouse_event_to_plane_position_nd(
+    event: Event,
+    viewer: napari.viewer.Viewer,
+    plane_layer: napari.layers.Image,
+) -> np.ndarray:
+    intersection_3d = mouse_event_to_plane_position_3d(
+        event=event, viewer=viewer, plane_layer=plane_layer
+    )
+    intersection_nd = np.asarray(viewer.dims.point)
+    displayed_dims = np.asarray(viewer.dims.displayed)[
+        list(viewer.dims.displayed_order)
+    ]
+    intersection_nd[displayed_dims] = intersection_3d
+    return intersection_nd
